@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import Image from "next/image";
 
@@ -21,7 +20,7 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation links */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
           <Link
             href="/"
             className="text-sm font-medium text-gray-700 transition hover:text-[#16A34A]"
@@ -29,13 +28,13 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="/About"
+            href="/about"
             className="text-sm font-medium text-gray-700 transition hover:text-[#16A34A]"
           >
             About
           </Link>
           <Link
-            href="/Pricing"
+            href="/pricing"
             className="text-sm font-medium text-gray-700 transition hover:text-[#16A34A]"
           >
             Pricing
@@ -44,20 +43,15 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-5">
-          <Link
-            href="/Login"
-            className="text-sm font-medium text-gray-700 transition hover:text-[#16A34A]"
-          >
+          <Link href="/login" className="text-sm font-medium text-gray-700 transition hover:text-[#16A34A]">
             Log in
           </Link>
 
-          <Link
-            href="/Signup"
-            className="rounded-xl bg-[#22C55E] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#16A34A]"
-          >
+          <Link href="/signup" className="rounded-xl bg-[#22C55E] px-5 py-3 text-sm font-semibold text-[#052E16] transition hover:bg-[#16A34A]">
             Get Started
           </Link>
         </div>
+
       </div>
     </nav>
   );
