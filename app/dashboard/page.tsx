@@ -1,22 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 type Task = {
-  id: number;
+  id: string;
   title: string;
+  description: string | null;
   category: string;
   completed: boolean;
 };
-
-const initialTasks: Task[] = [
-  { id: 1, title: "Finish homepage design", category: "Design", completed: true },
-  { id: 2, title: "Review project requirements", category: "Planning", completed: false },
-  { id: 3, title: "Build responsive navbar", category: "Development", completed: false },
-  { id: 4, title: "Plan the next sprint", category: "Planning", completed: false },
-];
 
 const navigation = [
   { name: "Dashboard", icon: "▦" },
@@ -28,42 +24,73 @@ const navigation = [
 const categories = ["Development", "Design", "Planning", "Personal"];
 
 export default function DashboardPage() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const router = useRouter();
+  const supabase = useMemo(() => createClient(), []);
+
+  const [newDescription, setNewDescription] = useState("");
+
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editCategory, setEditCategory] = useState("Development");
+
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [activePage, setActivePage] = useState("Dashboard");
   const [newTask, setNewTask] = useState("");
   const [category, setCategory] = useState("Development");
   const [showForm, setShowForm] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  // Load saved tasks from the browser.
+  // Load this user's tasks from Supabase.
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("taskly-tasks");
+    let cancelled = false;
 
-      if (saved) {
-        const parsed: unknown = JSON.parse(saved);
+    async function loadTasks() {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
 
-        if (Array.isArray(parsed)) {
-          setTasks(parsed as Task[]);
-        }
+      if (cancelled) return;
+
+      if (authError || !user) {
+        router.replace("/login");
+        return;
       }
-    } catch {
-      // Keep the starter tasks if saved data cannot be read.
+
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("id, title, description, category, is_completed")
+        .order("created_at", { ascending: false });
+
+      if (cancelled) return;
+
+      if (error) {
+        setErrorMessage(`Could not load tasks: ${error.message}`);
+      } 
+      else {
+        setTasks(
+          (data ?? []).map((task) => ({
+            id: task.id,
+            title: task.title,
+            description: task.description,
+            category: task.category,
+            completed: task.is_completed,
+          }))
+        );
+      }
+
+      setLoaded(true);
     }
 
-    setLoaded(true);
-  }, []);
+    void loadTasks();
 
-  // Save changes after the initial load.
-  useEffect(() => {
-    if (!loaded) return;
-
-    try {
-      localStorage.setItem("taskly-tasks", JSON.stringify(tasks));
-    } catch {
-      // The dashboard still works if browser storage is unavailable.
-    }
-  }, [tasks, loaded]);
+    return () => {
+      cancelled = true;
+    };
+  }, [router, supabase]);
 
   const completedCount = tasks.filter((task) => task.completed).length;
   const totalCount = tasks.length;
@@ -76,37 +103,147 @@ export default function DashboardPage() {
     return true;
   });
 
-  function toggleTask(id: number) {
-    setTasks((current) =>
-      current.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+  async function toggleTask(id: string) {
+  const task = tasks.find((item) => item.id === id);
+  if (!task) return;
+
+  setErrorMessage("");
+
+  const { error } = await supabase
+    .from("tasks")
+    .update({ is_completed: !task.completed })
+    .eq("id", id);
+
+  if (error) {
+    setErrorMessage(`Could not update task: ${error.message}`);
+    return;
   }
 
-  function addTask(event: React.FormEvent<HTMLFormElement>) {
+  setTasks((current) =>
+    current.map((item) =>
+      item.id === id
+        ? { ...item, completed: !item.completed }
+        : item
+    )
+  );
+}
+
+  async function addTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const title = newTask.trim();
-    if (!title) return;
+    if (!title || saving) return;
 
-    setTasks((current) => [
-      ...current,
-      {
-        id: Date.now(),
-        title,
-        category,
-        completed: false,
-      },
-    ]);
+    setSaving(true);
+    setErrorMessage("");
 
-    setNewTask("");
-    setShowForm(false);
-    setActivePage("My Tasks");
+    try {
+      const { data, error } = await supabase
+        .from("tasks")
+        .insert({
+          title,
+          description: newDescription.trim() || null,
+          category,
+          is_completed: false,
+        })
+        .select("id, title, description, category, is_completed")
+        .single();
+      if (error) {
+        setErrorMessage(`Could not create task: ${error.message}`);
+        return;
+      }
+
+      setTasks((current) => [
+        {
+          id: data.id,
+          title: data.title,
+          description: data.description,
+          category: data.category,
+          completed: data.is_completed,
+        },
+        ...current,
+      ]);
+
+      setNewTask("");
+      setNewDescription("");
+      setShowForm(false);
+      setActivePage("My Tasks");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function deleteTask(id: number) {
+  async function deleteTask(id: string) {
+    setErrorMessage("");
+
+    const { error } = await supabase
+      .from("tasks")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      setErrorMessage(`Could not delete task: ${error.message}`);
+      return;
+    }
+
     setTasks((current) => current.filter((task) => task.id !== id));
+  }
+
+  async function saveTaskEdit(id: string) {
+    const title = editTitle.trim();
+
+    if (!title) {
+      setErrorMessage("Task title cannot be empty.");
+      return;
+    }
+
+    setErrorMessage("");
+
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({
+        title,
+        description: editDescription.trim() || null,
+        category: editCategory,
+      })
+      .eq("id", id)
+      .select("id, title, description, category, is_completed")
+      .single();
+
+    if (error) {
+      setErrorMessage(`Could not save changes: ${error.message}`);
+      return;
+    }
+
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === id
+          ? {
+              id: data.id,
+              title: data.title,
+              description: data.description,
+              category: data.category,
+              completed: data.is_completed,
+            }
+          : task
+      )
+    );
+
+    setEditingTaskId(null);
+  }
+
+  async function handleLogout() {
+    setErrorMessage("");
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      setErrorMessage(`Could not log out: ${error.message}`);
+      return;
+    }
+
+    router.replace("/login");
+    router.refresh();
   }
 
   const today = new Date().toLocaleDateString("en-GB", {
@@ -145,7 +282,7 @@ export default function DashboardPage() {
               className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${
                 activePage === item.name
                   ? "bg-[#DCFCE7] text-[#166534]"
-                  : "text-[#64756B] hover:bg-green-50 hover:text-[#052E16]"
+                  : "text-[#64756B] hover:[#064E3B] hover:text-[#052E16]"
               }`}
             >
               <span className="w-5 text-center text-lg">{item.icon}</span>
@@ -166,10 +303,20 @@ export default function DashboardPage() {
 
         <Link
           href="/"
-          className="mt-5 hidden rounded-xl px-4 py-3 text-sm font-medium text-[#64756B] hover:bg-green-50 md:block"
+          className="mt-5 hidden rounded-xl px-4 py-3 text-sm font-medium text-[#64756B] hover:[#064E3B] md:block"
         >
           ← Back to homepage
         </Link>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="mt-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
+          >
+            <span className="w-5 text-center text-lg" aria-hidden="true">
+              ↪
+            </span>
+            Log out
+          </button>
       </aside>
 
       {/* Main content */}
@@ -202,6 +349,15 @@ export default function DashboardPage() {
           )}
         </header>
 
+        {errorMessage && (
+          <div
+            role="alert"
+            className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          >
+            {errorMessage}
+          </div>
+        )}
+
         {/* Statistics */}
         {activePage !== "Settings" && (
           <div className="mt-9 grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -210,7 +366,7 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium text-[#64756B]">
                   Total tasks
                 </p>
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-50 text-lg">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl [#064E3B] text-lg">
                   ☷
                 </span>
               </div>
@@ -258,12 +414,12 @@ export default function DashboardPage() {
                   You&apos;re making progress. Keep it up!
                 </p>
               </div>
-              <span className="text-2xl font-bold text-[#15803D]">
+              <span className="text-2xl font-bold text-[#064E3B]">
                 {progress}%
               </span>
             </div>
             <div
-              className="mt-5 h-2.5 overflow-hidden rounded-full bg-green-50"
+              className="mt-5 h-2.5 overflow-hidden rounded-full [#064E3B]"
               role="progressbar"
               aria-label="Task completion"
               aria-valuemin={0}
@@ -271,7 +427,7 @@ export default function DashboardPage() {
               aria-valuenow={progress}
             >
               <div
-                className="h-full rounded-full bg-[#22C55E] transition-all duration-300"
+                className="h-full rounded-full bg-[#064E3B] transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -319,10 +475,25 @@ export default function DashboardPage() {
                 </option>
               ))}
             </select>
+            <label
+              htmlFor="task-description"
+              className="mb-2 mt-4 block text-sm font-medium"
+            >
+              Description (optional)
+            </label>
 
+            <textarea
+              id="task-description"
+              value={newDescription}
+              onChange={(event) => setNewDescription(event.target.value)}
+              placeholder="Add more details about this task..."
+              rows={3}
+              className="w-full resize-y rounded-xl border border-green-200 bg-[#FAFFF5] px-4 py-3 text-sm outline-none transition placeholder:text-[#94A399] focus:border-[#16A34A] focus:ring-2 focus:ring-green-100"
+            />            
             <div className="mt-5 flex flex-wrap gap-3">
               <button
                 type="submit"
+                disabled={saving}
                 className="rounded-xl bg-[#064E3B] px-5 py-3 text-sm font-semibold text-white hover:bg-[#052E16]"
               >
                 Create task
@@ -333,7 +504,7 @@ export default function DashboardPage() {
                   setShowForm(false);
                   setNewTask("");
                 }}
-                className="rounded-xl px-5 py-3 text-sm font-semibold text-[#64756B] hover:bg-green-50"
+                className="rounded-xl px-5 py-3 text-sm font-semibold text-[#64756B] hover:[#064E3B]"
               >
                 Cancel
               </button>
@@ -361,6 +532,11 @@ export default function DashboardPage() {
             </div>
 
             <div className="space-y-3">
+              {!loaded && (
+                <p className="py-6 text-sm text-[#64756B]">
+                  Loading your tasks...
+                </p>
+              )}              
               {visibleTasks.map((task) => (
                 <article
                   key={task.id}
@@ -376,28 +552,112 @@ export default function DashboardPage() {
                     }
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition ${
                       task.completed
-                        ? "border-[#16A34A] bg-[#16A34A] text-white"
-                        : "border-green-200 hover:border-[#16A34A]"
+                        ? "border-[#064E3B] bg-[#064E3B] text-white"
+                        : "border-green-200 hover:border-[#064E3B]"
                     }`}
                   >
                     {task.completed && <span className="text-sm">✓</span>}
-                  </button>
-
+                  </button>     
                   <div className="min-w-0 flex-1">
-                    <p
-                      className={`break-words text-sm font-semibold sm:text-base ${
-                        task.completed
-                          ? "text-[#94A399] line-through"
-                          : "text-[#052E16]"
-                      }`}
-                    >
-                      {task.title}
-                    </p>
-                    <span className="mt-2 inline-flex rounded-full bg-[#DCFCE7] px-3 py-1 text-xs font-medium text-[#166534]">
-                      {task.category}
-                    </span>
+                    {editingTaskId === task.id ? (
+                      <div className="space-y-3">
+                        <label className="block text-sm font-medium">
+                          Task title
+                          <input
+                            value={editTitle}
+                            onChange={(event) => setEditTitle(event.target.value)}
+                            className="mt-1 w-full rounded-lg border border-green-200 px-3 py-2 text-sm outline-none focus:border-green-500"
+                            maxLength={200}
+                            required
+                          />
+                        </label>
+
+                        <label className="block text-sm font-medium">
+                          Description
+                          <textarea
+                            value={editDescription}
+                            onChange={(event) => setEditDescription(event.target.value)}
+                            placeholder="Add task details..."
+                            rows={3}
+                            className="mt-1 w-full resize-y rounded-lg border border-green-200 px-3 py-2 text-sm outline-none focus:border-green-500"
+                          />
+                        </label>
+
+                        <label className="block text-sm font-medium">
+                          Category
+                          <select
+                            value={editCategory}
+                            onChange={(event) => setEditCategory(event.target.value)}
+                            className="mt-1 w-full rounded-lg border border-green-200 bg-white px-3 py-2 text-sm sm:max-w-xs"
+                          >
+                            {categories.map((item) => (
+                              <option key={item} value={item}>
+                                {item}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => saveTaskEdit(task.id)}
+                            className="rounded-lg bg-[#064E3B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#052E16]"
+                          >
+                            Save changes
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setEditingTaskId(null)}
+                            className="rounded-lg px-4 py-2 text-sm font-semibold text-[#64756B] hover:[#064E3B]"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p
+                          className={`break-words text-sm font-semibold sm:text-base ${
+                            task.completed
+                              ? "text-[#94A399] line-through"
+                              : "text-[#052E16]"
+                          }`}
+                        >
+                          {task.title}
+                        </p>
+
+                        {task.description && (
+                          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[#64756B]">
+                            {task.description}
+                          </p>
+                        )}
+
+                        <span className="mt-2 inline-flex rounded-full bg-[#DCFCE7] px-3 py-1 text-xs font-medium text-[#166534]">
+                          {task.category}
+                        </span>
+                      </>
+                    )}
                   </div>
 
+                  {editingTaskId !== task.id && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingTaskId(task.id);
+                        setEditTitle(task.title);
+                        setEditDescription(task.description ?? "");
+                        setEditCategory(task.category);
+                        setErrorMessage("");
+                      }}
+                      aria-label={`Edit ${task.title}`}
+                      className="rounded-lg px-3 py-2 text-sm font-semibold text-[#94A399] transition hover:text-[#064E3B]"
+                    >
+                      Edit
+                    </button>
+                  )}       
+                            
                   <button
                     type="button"
                     onClick={() => deleteTask(task.id)}
@@ -409,7 +669,7 @@ export default function DashboardPage() {
                 </article>
               ))}
 
-              {visibleTasks.length === 0 && (
+              {loaded && visibleTasks.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-green-200 bg-white/60 px-5 py-12 text-center">
                   <div className="text-3xl">✓</div>
                   <h3 className="mt-3 font-bold">Nothing here just yet</h3>

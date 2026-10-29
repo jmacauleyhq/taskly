@@ -95,13 +95,13 @@ export default function LandingPage() {
                       Keep up the momentum
                     </p>
                   </div>
-                  <span className="text-lg font-bold text-[#15803D]">
-                    2/5
+                  <span className="text-lg font-bold text-[#064E3B]">
+                    40%
                   </span>
                 </div>
 
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-green-100">
-                  <div className="h-full w-2/5 rounded-full bg-[#22C55E]" />
+                  <div className="h-full w-2/5 rounded-full bg-[#064E3B]" />
                 </div>
               </div>
 
@@ -121,7 +121,7 @@ export default function LandingPage() {
                       <span
                         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
                           task.done
-                            ? "border-[#16A34A] bg-[#16A34A] text-white"
+                            ? "border-[#064E3B] bg-[#064E3B] text-white"
                             : "border-gray-300 bg-white"
                         }`}
                       >

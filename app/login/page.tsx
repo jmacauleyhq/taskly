@@ -236,6 +236,18 @@ export default function LoginPage() {
               )}
             </div>
 
+            {/* Forgot password */}
+            {!isSignup && (
+              <div className="-mt-2 flex justify-end">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm font-semibold text-[#3F6212] transition hover:text-[#052E16] hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
+
             {/* Confirm password */}
             {isSignup && (
               <div>

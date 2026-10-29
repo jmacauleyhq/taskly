@@ -1,11 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  const links = [
+    { label: "Home", href: "/" },
+    { label: "Features", href: "/features" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "About", href: "/about" },
+  ];
+
   return (
     <nav className="w-full bg-[#F7FEE7]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
@@ -22,33 +33,24 @@ export default function Navbar() {
 
         {/* Navigation links */}
         <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-9 md:flex">
-          <Link
-            href="/"
-            className="relative py-2 text-sm font-medium text-[#052E16] transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-[#052E16]"
-          >
-            Home
-          </Link>
+          {links.map((link) => {
+            const isActive = pathname === link.href;
 
-          <Link
-            href="/features"
-            className="py-2 text-sm font-medium text-[#365347] transition-colors hover:text-[#052E16]"
-          >
-            Features
-          </Link>
-
-          <Link
-            href="/pricing"
-            className="py-2 text-sm font-medium text-[#365347] transition-colors hover:text-[#052E16]"
-          >
-            Pricing
-          </Link>
-
-          <Link
-            href="/about"
-            className="py-2 text-sm font-medium text-[#365347] transition-colors hover:text-[#052E16]"
-          >
-            About
-          </Link>
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`relative py-2 text-sm font-medium transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:origin-left after:bg-[#052E16] after:transition-transform after:duration-200 ${
+                  isActive
+                    ? "text-[#052E16] after:scale-x-100"
+                    : "text-[#365347] after:scale-x-0 hover:text-[#052E16] hover:after:scale-x-100"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Actions */}
@@ -67,7 +69,6 @@ export default function Navbar() {
             Get Started
           </Link>
         </div>
-
       </div>
     </nav>
   );
