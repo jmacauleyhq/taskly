@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Taskly
+
+**Get things done.**
+
+Taskly is a productivity web application designed to help users organise tasks, manage their time, and stay focused on what matters.
+
+## Overview
+
+Taskly aims to provide a clean, intuitive interface for managing everyday tasks and building better productivity habits.
+
+## Features
+
+- **Task Management** — Organise and track everyday tasks.
+- **Simple Interface** — A clean, distraction-free user experience.
+- **Responsive Design** — Designed to work across desktop, tablet, and mobile devices.
+- **Productivity Focused** — Help users prioritise tasks and manage their time effectively.
+
+*Features are planned and subject to implementation.*
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) — React framework
+- [React](https://react.dev/) — User interface library
+- [TypeScript](https://www.typescriptlang.org/) — Type safety
+- [Tailwind CSS](https://tailwindcss.com/) — Styling
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Ensure you have the following installed:
+
+- Node.js (LTS recommended)
+- npm
+- Git (optional, for version control)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   ```
+
+2. Navigate into the project directory:
+
+   ```bash
+   cd taskly
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```text
+taskly/
+├── public/              # Static assets
+├── src/
+│   └── app/             # Application routes and pages
+│       ├── components/  # Reusable UI components
+│       ├── globals.css  # Global styles
+│       ├── layout.tsx   # Root layout
+│       └── page.tsx     # Homepage
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+└── README.md
+```
+
+*The structure above is an example and should be adjusted to match the actual repository.*
+
+## Development
+
+Run the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build the application for production:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Run the production server:
 
-## Learn More
+```bash
+npm run start
+```
 
-To learn more about Next.js, take a look at the following resources:
+Run linting if the corresponding script is configured:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design Principles
 
-## Deploy on Vercel
+Taskly follows these core design principles:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Clarity** — Keep interfaces easy to understand.
+- **Simplicity** — Avoid unnecessary visual clutter.
+- **Consistency** — Use reusable components and consistent styling.
+- **Accessibility** — Make the application usable by as many people as possible.
+- **Responsiveness** — Provide a consistent experience across screen sizes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Colour Palette
+
+| Role | Hex |
+|---|---|
+| Primary text | `#052E16` |
+| Primary background | `#F7FEE7` |
+| Primary actions | `#064E3B` |
+| Accent | `#DCFCE7` |
+| Secondary text | `#64756B` |
+
+## Contributing
+
+Contributions and suggestions are welcome.
+
+1. Create a branch for your changes.
+2. Keep changes focused and maintain consistent coding conventions.
+3. Test your changes locally.
+4. Submit a pull request describing your changes.
+
+## Licence
+
+No licence has been specified yet. Add a `LICENSE` file before distributing the project under an open-source licence.
+
+## Status
+
+**Development in progress.**
+
+Taskly is currently being developed, with the initial focus on the landing page, reusable UI components, and responsive design.

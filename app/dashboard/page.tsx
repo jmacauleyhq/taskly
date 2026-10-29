@@ -164,12 +164,12 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <a
+        <Link
           href="/"
           className="mt-5 hidden rounded-xl px-4 py-3 text-sm font-medium text-[#64756B] hover:bg-green-50 md:block"
         >
           ← Back to homepage
-        </a>
+        </Link>
       </aside>
 
       {/* Main content */}
@@ -255,7 +255,7 @@ export default function DashboardPage() {
               <div>
                 <h2 className="font-bold">Your progress</h2>
                 <p className="mt-1 text-sm text-[#64756B]">
-                  You're making progress. Keep it up!
+                  You&apos;re making progress. Keep it up!
                 </p>
               </div>
               <span className="text-2xl font-bold text-[#15803D]">

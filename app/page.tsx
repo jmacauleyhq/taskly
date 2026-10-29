@@ -164,7 +164,7 @@ export default function LandingPage() {
                 ✨
               </div>
               <div>
-                <p className="text-sm font-bold">You're making progress!</p>
+                <p className="text-sm font-bold">You&apos;re making progress!</p>
                 <p className="mt-1 text-xs text-[#64756B]">
                   One step at a time.
                 </p>
