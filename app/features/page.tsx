@@ -183,7 +183,7 @@ export default function FeaturesPage() {
             </p>
 
             <p className="text-sm text-[#64756B]">
-              © {new Date().getFullYear()} Taskly
+              © 2026 Taskly
             </p>
           </div>
         </footer>
