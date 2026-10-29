@@ -10,13 +10,13 @@ export default function Navbar() {
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
             src="/taskly-logo.svg"
-            alt="Taskly logo"
+            alt="taskly logo"
             width={40}
             height={40}
             priority
           />
           <span className="text-2xl font-bold tracking-tight text-[#052E16]">
-            Taskly
+            taskly
           </span>
         </Link>
 
@@ -61,7 +61,7 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/signup"
+            href="/login"
             className="rounded-full bg-[#064E3B] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#052E16] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#064E3B]"
           >
             Get Started

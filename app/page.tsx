@@ -37,7 +37,7 @@ export default function LandingPage() {
 
             <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link
-                href="/signup"
+                href="/login"
                 className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#064E3B] px-7 py-4 text-base font-semibold text-white shadow-lg shadow-green-950/10 transition duration-200 hover:-translate-y-0.5 hover:bg-[#052E16]"
               >
                 Get Started
@@ -241,7 +241,7 @@ export default function LandingPage() {
               Bring your tasks together, find your focus and make today count.
             </p>
             <Link
-              href="/signup"
+              href="/login"
               className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#F7FEE7] px-7 py-4 font-semibold text-[#052E16] transition hover:bg-white"
             >
               Get Started
@@ -254,13 +254,13 @@ export default function LandingPage() {
         <footer className="border-t border-green-100">
           <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row sm:px-8">
             <Link href="/" className="text-xl font-bold tracking-tight">
-              Taskly<span className="text-[#16A34A]">.</span>
+              taskly<span className="text-[#16A34A]">.</span>
             </Link>
             <p className="text-sm text-[#64756B]">
               Make every task count.
             </p>
             <p className="text-sm text-[#64756B]">
-              © 2026 Taskly
+              © 2026 taskly
             </p>
           </div>
         </footer>
