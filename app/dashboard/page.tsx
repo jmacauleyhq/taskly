@@ -42,6 +42,7 @@ export default function DashboardPage() {
   const [loaded, setLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [today, setToday] = useState("");
 
   // Load this user's tasks from Supabase.
   useEffect(() => {
@@ -91,6 +92,17 @@ export default function DashboardPage() {
       cancelled = true;
     };
   }, [router, supabase]);
+
+  useEffect(() => {
+    setToday(
+      new Date().toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    );
+  }, []);
 
   const completedCount = tasks.filter((task) => task.completed).length;
   const totalCount = tasks.length;
@@ -245,14 +257,7 @@ export default function DashboardPage() {
     router.replace("/login");
     router.refresh();
   }
-
-  const today = new Date().toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
+  
   return (
     <main className="min-h-screen bg-[#F7FEE7] text-[#052E16] md:flex">
       {/* Sidebar */}
@@ -281,8 +286,8 @@ export default function DashboardPage() {
               onClick={() => setActivePage(item.name)}
               className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${
                 activePage === item.name
-                  ? "bg-[#DCFCE7] text-[#166534]"
-                  : "text-[#64756B] hover:[#064E3B] hover:text-[#052E16]"
+                  ? "bg-[#F7FEE7] text-[#166534]"
+                  : "text-[#64756B] hover:bg-[#F7FEE7] hover:text-[#052E16]"
               }`}
             >
               <span className="w-5 text-center text-lg">{item.icon}</span>
@@ -303,7 +308,7 @@ export default function DashboardPage() {
 
         <Link
           href="/"
-          className="mt-5 hidden rounded-xl px-4 py-3 text-sm font-medium text-[#64756B] hover:[#064E3B] md:block"
+          className="mt-5 hidden rounded-xl px-4 py-3 text-sm font-medium text-[#64756B] hover:bg-[#064E3B] md:block"
         >
           ← Back to homepage
         </Link>
@@ -504,7 +509,7 @@ export default function DashboardPage() {
                   setShowForm(false);
                   setNewTask("");
                 }}
-                className="rounded-xl px-5 py-3 text-sm font-semibold text-[#64756B] hover:[#064E3B]"
+                className="rounded-xl px-5 py-3 text-sm font-semibold text-[#64756B] hover:bg-[#064E3B]"
               >
                 Cancel
               </button>
@@ -610,7 +615,7 @@ export default function DashboardPage() {
                           <button
                             type="button"
                             onClick={() => setEditingTaskId(null)}
-                            className="rounded-lg px-4 py-2 text-sm font-semibold text-[#64756B] hover:[#064E3B]"
+                            className="rounded-lg px-4 py-2 text-sm font-semibold text-[#64756B] hover:bg-[#064E3B]"
                           >
                             Cancel
                           </button>
