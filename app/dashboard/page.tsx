@@ -42,7 +42,15 @@ export default function DashboardPage() {
   const [loaded, setLoaded] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [saving, setSaving] = useState(false);
-  const [today, setToday] = useState("");
+  const [today] = useState(() => {
+    if (typeof window === "undefined") return "";
+      return new Date().toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+  });
 
   // Load this user's tasks from Supabase.
   useEffect(() => {
@@ -92,17 +100,6 @@ export default function DashboardPage() {
       cancelled = true;
     };
   }, [router, supabase]);
-
-  useEffect(() => {
-    setToday(
-      new Date().toLocaleDateString("en-GB", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    );
-  }, []);
 
   const completedCount = tasks.filter((task) => task.completed).length;
   const totalCount = tasks.length;
@@ -257,7 +254,7 @@ export default function DashboardPage() {
     router.replace("/login");
     router.refresh();
   }
-  
+
   return (
     <main className="min-h-screen bg-[#F7FEE7] text-[#052E16] md:flex">
       {/* Sidebar */}

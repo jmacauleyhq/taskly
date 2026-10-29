@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,7 +57,7 @@ export default function LoginPage() {
 
         if (error) throw error;
 
-        window.location.href = "/dashboard";
+        router.push("/dashboard");
         return;
       }
     } catch (error) {
