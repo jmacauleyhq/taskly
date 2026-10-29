@@ -230,7 +230,7 @@ export default function PricingPage() {
       {/* Footer */}
       <footer className="border-t border-green-100 px-6 py-8">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-[#64756B] sm:flex-row">
-          <p>© {new Date().getFullYear()} Taskly. All rights reserved.</p>
+          <p>© 2026 Taskly. All rights reserved.</p>
 
           <div className="flex gap-6">
             <Link href="/features" className="transition hover:text-green-800">
