@@ -11,10 +11,10 @@ export default function Navbar() {
           <Image
             src="/taskly-logo.svg"
             alt="Taskly logo"
-            width={40}
-            height={40}
+            width={48}
+            height={48}
           />
-          <span className="text-xl font-bold tracking-tight text-[#22C55E]">
+          <span className="text-2xl font-bold tracking-tight text-[#22C55E]">
             taskly
           </span>
         </Link>
