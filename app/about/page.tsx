@@ -12,7 +12,7 @@ export default function AboutPage() {
         <section className="px-6 pb-20 pt-20 text-center sm:pb-28 sm:pt-28">
           <div className="mx-auto max-w-3xl">
             <span className="inline-flex rounded-full border border-green-200 bg-white/70 px-4 py-2 text-sm font-medium text-green-800">
-              About taskly
+              About Taskly
             </span>
 
             <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-6xl">
@@ -23,7 +23,7 @@ export default function AboutPage() {
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-[#52665A] sm:text-lg">
-              taskly is built around one simple idea: getting things done
+              Taskly is built around one simple idea: getting things done
               shouldn&apos;t feel complicated. We want to help you organise
               your tasks, focus on what matters, and make progress one step
               at a time.
