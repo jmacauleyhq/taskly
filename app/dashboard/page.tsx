@@ -251,7 +251,7 @@ export default function DashboardPage() {
       return;
     }
 
-    router.replace("/login");
+    router.replace("/");
     router.refresh();
   }
 
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                 priority
             />
           <span className="text-2xl font-bold tracking-tight">
-            Taskly<span className="text-[#16A34A]">.</span>
+            taskly<span className="text-[#16A34A]">.</span>
           </span>
         </Link>
 
@@ -709,7 +709,7 @@ export default function DashboardPage() {
         )}
 
         <footer className="mt-12 border-t border-green-100 py-6 text-center text-xs text-[#819087]">
-          Taskly · Make every task count.
+          taskly · Make every task count.
         </footer>
       </section>
     </main>

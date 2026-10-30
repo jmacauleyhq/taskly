@@ -172,21 +172,23 @@ export default function FeaturesPage() {
         </section>
 
         {/* Footer */}
-        <footer className="border-t border-green-100 bg-white/50">
-          <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row sm:px-8">
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              taskly<span className="text-[#16A34A]">.</span>
+        <footer className="border-t border-green-100 px-6 py-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-[#64756B] sm:flex-row">
+          <p>© 2026 taskly. All rights reserved.</p>
+
+          <div className="flex gap-6">
+            <Link href="/about" className="transition hover:text-green-800">
+              About
             </Link>
-
-            <p className="text-sm text-[#64756B]">
-              Make every task count.
-            </p>
-
-            <p className="text-sm text-[#64756B]">
-              © 2026 Taskly
-            </p>
+            <Link href="/pricing" className="transition hover:text-green-800">
+              Pricing
+            </Link>
+            <Link href="/login" className="transition hover:text-green-800">
+              Log in
+            </Link>
           </div>
-        </footer>
+        </div>
+      </footer>
       </main>
     </>
   );

@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
             priority
           />
           <span className="text-2xl font-bold tracking-tight">
-            Taskly<span className="text-[#16A34A]">.</span>
+            taskly<span className="text-[#16A34A]">.</span>
           </span>
         </Link>
 

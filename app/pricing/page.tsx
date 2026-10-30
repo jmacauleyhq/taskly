@@ -179,7 +179,7 @@ export default function PricingPage() {
             <div className="mt-10 space-y-4">
               {[
                 {
-                  question: "Can I use Taskly for free?",
+                  question: "Can I use taskly for free?",
                   answer:
                     "Yes! The Free plan is designed to help you get started with organising your tasks at no cost.",
                 },
@@ -215,7 +215,7 @@ export default function PricingPage() {
           </h2>
 
           <p className="mx-auto mt-4 max-w-xl leading-7 text-[#52665A]">
-            Give Taskly a try and build a more organised day, one task at a time.
+            Give taskly a try and build a more organised day, one task at a time.
           </p>
 
           <Link
@@ -230,7 +230,7 @@ export default function PricingPage() {
       {/* Footer */}
       <footer className="border-t border-green-100 px-6 py-8">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-[#64756B] sm:flex-row">
-          <p>© 2026 Taskly. All rights reserved.</p>
+          <p>© 2026 taskly. All rights reserved.</p>
 
           <div className="flex gap-6">
             <Link href="/features" className="transition hover:text-green-800">

@@ -353,7 +353,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => {
-                setIsSignup(!isSignup);
+                setIsSignup((current) => !current);
                 setMessage("");
                 setConfirmPassword("");
                 setShowPassword(false);
