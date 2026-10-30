@@ -177,11 +177,11 @@ export default function FeaturesPage() {
           <p>© 2026 taskly. All rights reserved.</p>
 
           <div className="flex gap-6">
-            <Link href="/about" className="transition hover:text-green-800">
-              About
-            </Link>
             <Link href="/pricing" className="transition hover:text-green-800">
               Pricing
+            </Link>
+            <Link href="/about" className="transition hover:text-green-800">
+              About
             </Link>
             <Link href="/login" className="transition hover:text-green-800">
               Log in
